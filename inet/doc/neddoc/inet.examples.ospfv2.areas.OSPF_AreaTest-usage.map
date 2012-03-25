@@ -1,0 +1,5 @@
+<area shape="rect" href="inet.examples.ospfv2.areas.OSPF_AreaTest.html" title="Network OSPF_AreaTest" alt="" coords="176,5,291,32">
+<area shape="rect" href="inet.examples.ospfv2.areas.TwoNetsArea.html" title="Compound Module TwoNetsArea" alt="" coords="5,80,104,107">
+<area shape="rect" href="inet.examples.ospfv2.areas.OneNetArea.html" title="Compound Module OneNetArea" alt="" coords="128,80,219,107">
+<area shape="rect" href="ned.DelayChannel.html" title="Channel DelayChannel" alt="" coords="243,80,344,107">
+<area shape="rect" href="inet.world.ChannelInstaller.html" title="Simple Module ChannelInstaller" alt="" coords="368,80,480,107">

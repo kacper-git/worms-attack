@@ -1,0 +1,16 @@
+<area shape="rect" href="inet.nodes.wireless.WirelessHostSimplified.html" title="Compound Module WirelessHostSimplified" alt="" coords="785,80,940,107">
+<area shape="rect" href="inet.networklayer.common.InterfaceTable.html" title="Simple Module InterfaceTable" alt="" coords="5,155,104,181">
+<area shape="rect" href="inet.base.NotificationBoard.html" title="Simple Module NotificationBoard" alt="" coords="128,155,248,181">
+<area shape="rect" href="inet.linklayer.ethernet.EthernetInterface.html" title="Compound Module EthernetInterface" alt="" coords="272,155,392,181">
+<area shape="rect" href="inet.networklayer.ipv4.RoutingTable.html" title="Simple Module RoutingTable" alt="" coords="416,155,512,181">
+<area shape="rect" href="inet.linklayer.ppp.PPPInterface.html" title="Compound Module PPPInterface" alt="" coords="536,155,632,181">
+<area shape="rect" href="inet.mobility.BasicMobility.html" title="Module Interface BasicMobility" alt="" coords="656,155,755,181">
+<area shape="rect" href="inet.applications.pingapp.PingApp.html" title="Simple Module PingApp" alt="" coords="779,155,851,181">
+<area shape="rect" href="inet.applications.tcpapp.TCPApp.html" title="Module Interface TCPApp" alt="" coords="875,155,947,181">
+<area shape="rect" href="inet.nodes.inet.NetworkLayer.html" title="Compound Module NetworkLayer" alt="" coords="971,155,1069,181">
+<area shape="rect" href="inet.transport.udp.UDP.html" title="Simple Module UDP" alt="" coords="1093,155,1165,181">
+<area shape="rect" href="inet.linklayer.ieee80211.Ieee80211NicSTASimplified.html" title="Compound Module Ieee80211NicSTASimplified" alt="" coords="1189,155,1368,181">
+<area shape="rect" href="inet.transport.tcp.TCP.html" title="Simple Module TCP" alt="" coords="1392,155,1464,181">
+<area shape="rect" href="ned.IdealChannel.html" title="Channel IdealChannel" alt="" coords="1488,155,1584,181">
+<area shape="rect" href="inet.applications.udpapp.UDPApp.html" title="Module Interface UDPApp" alt="" coords="1608,155,1680,181">
+<area shape="rect" href="inet.examples.wireless.lan80211.Lan80211.html" title="Network Lan80211" alt="" coords="825,5,900,32">

@@ -1,0 +1,20 @@
+<area shape="rect" href="inet.nodes.inet.StandardHostWithDLThruputMeter.html" title="Compound Module StandardHostWithDLThruputMeter" alt="" coords="1020,80,1239,107">
+<area shape="rect" href="inet.transport.tcp.ITCP.html" title="Module Interface ITCP" alt="" coords="5,155,77,181">
+<area shape="rect" href="inet.linklayer.ppp.PPPInterfaceWithDLThruputMeter.html" title="Compound Module PPPInterfaceWithDLThruputMeter" alt="" coords="101,155,317,181">
+<area shape="rect" href="inet.networklayer.common.InterfaceTable.html" title="Simple Module InterfaceTable" alt="" coords="341,155,440,181">
+<area shape="rect" href="inet.linklayer.ext.ExtInterface.html" title="Simple Module ExtInterface" alt="" coords="464,155,555,181">
+<area shape="rect" href="inet.util.TCPDump.html" title="Simple Module TCPDump" alt="" coords="579,155,659,181">
+<area shape="rect" href="inet.linklayer.ethernet.EthernetInterface.html" title="Compound Module EthernetInterface" alt="" coords="683,155,803,181">
+<area shape="rect" href="inet.base.NotificationBoard.html" title="Simple Module NotificationBoard" alt="" coords="827,155,947,181">
+<area shape="rect" href="inet.networklayer.ipv4.RoutingTable.html" title="Simple Module RoutingTable" alt="" coords="971,155,1067,181">
+<area shape="rect" href="inet.applications.sctpapp.SCTPApp.html" title="Module Interface SCTPApp" alt="" coords="1091,155,1168,181">
+<area shape="rect" href="inet.applications.pingapp.PingApp.html" title="Simple Module PingApp" alt="" coords="1192,155,1264,181">
+<area shape="rect" href="inet.applications.tcpapp.TCPApp.html" title="Module Interface TCPApp" alt="" coords="1288,155,1360,181">
+<area shape="rect" href="inet.nodes.inet.NetworkLayer.html" title="Compound Module NetworkLayer" alt="" coords="1384,155,1483,181">
+<area shape="rect" href="inet.transport.udp.UDP.html" title="Simple Module UDP" alt="" coords="1507,155,1579,181">
+<area shape="rect" href="inet.util.NAMTraceWriter.html" title="Simple Module NAMTraceWriter" alt="" coords="1603,155,1720,181">
+<area shape="rect" href="ned.IdealChannel.html" title="Channel IdealChannel" alt="" coords="1744,155,1840,181">
+<area shape="rect" href="inet.transport.sctp.SCTP.html" title="Simple Module SCTP" alt="" coords="1864,155,1936,181">
+<area shape="rect" href="inet.applications.udpapp.UDPApp.html" title="Module Interface UDPApp" alt="" coords="1960,155,2032,181">
+<area shape="rect" href="inet.examples.inet.ber.ber.html" title="Network ber" alt="" coords="1036,5,1108,32">
+<area shape="rect" href="inet.examples.inet.tcpwindowscale.tcpwindowscale.html" title="Network tcpwindowscale" alt="" coords="1132,5,1244,32">

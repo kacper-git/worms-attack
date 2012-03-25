@@ -1,0 +1,17 @@
+<area shape="rect" href="inet.nodes.ipv6.StandardHost6.html" title="Compound Module StandardHost6" alt="" coords="663,80,769,107">
+<area shape="rect" href="inet.transport.udp.UDP.html" title="Simple Module UDP" alt="" coords="5,155,77,181">
+<area shape="rect" href="inet.transport.tcp.ITCP.html" title="Module Interface ITCP" alt="" coords="101,155,173,181">
+<area shape="rect" href="inet.networklayer.common.InterfaceTable.html" title="Simple Module InterfaceTable" alt="" coords="197,155,296,181">
+<area shape="rect" href="inet.linklayer.ethernet.EthernetInterface.html" title="Compound Module EthernetInterface" alt="" coords="320,155,440,181">
+<area shape="rect" href="inet.base.NotificationBoard.html" title="Simple Module NotificationBoard" alt="" coords="464,155,584,181">
+<area shape="rect" href="ned.IdealChannel.html" title="Channel IdealChannel" alt="" coords="608,155,704,181">
+<area shape="rect" href="inet.linklayer.ppp.PPPInterface.html" title="Compound Module PPPInterface" alt="" coords="728,155,824,181">
+<area shape="rect" href="inet.applications.pingapp.PingApp.html" title="Simple Module PingApp" alt="" coords="848,155,920,181">
+<area shape="rect" href="inet.nodes.ipv6.NetworkLayer6.html" title="Compound Module NetworkLayer6" alt="" coords="944,155,1051,181">
+<area shape="rect" href="inet.applications.udpapp.UDPApp.html" title="Module Interface UDPApp" alt="" coords="1075,155,1147,181">
+<area shape="rect" href="inet.networklayer.ipv6.RoutingTable6.html" title="Simple Module RoutingTable6" alt="" coords="1171,155,1272,181">
+<area shape="rect" href="inet.applications.tcpapp.TCPApp.html" title="Module Interface TCPApp" alt="" coords="1296,155,1368,181">
+<area shape="rect" href="inet.examples.ipv6.ipv6bulk.BulkTransfer6.html" title="Network BulkTransfer6" alt="" coords="401,5,500,32">
+<area shape="rect" href="inet.examples.ipv6.demonetworketh.DemoNetworkEth.html" title="Network DemoNetworkEth" alt="" coords="524,5,647,32">
+<area shape="rect" href="inet.examples.ipv6.nclients.NClientsEth.html" title="Network NClientsEth" alt="" coords="671,5,761,32">
+<area shape="rect" href="inet.examples.ipv6.nclients.NClientsPPP.html" title="Network NClientsPPP" alt="" coords="785,5,881,32">

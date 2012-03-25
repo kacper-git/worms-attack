@@ -1,0 +1,12 @@
+<area shape="rect" href="inet.transport.rtp.RTPHost.html" title="Compound Module RTPHost" alt="" coords="503,80,575,107">
+<area shape="rect" href="inet.nodes.inet.NetworkLayer.html" title="Compound Module NetworkLayer" alt="" coords="5,155,104,181">
+<area shape="rect" href="inet.transport.udp.UDP.html" title="Simple Module UDP" alt="" coords="128,155,200,181">
+<area shape="rect" href="inet.networklayer.common.InterfaceTable.html" title="Simple Module InterfaceTable" alt="" coords="224,155,323,181">
+<area shape="rect" href="inet.base.NotificationBoard.html" title="Simple Module NotificationBoard" alt="" coords="347,155,467,181">
+<area shape="rect" href="inet.networklayer.ipv4.RoutingTable.html" title="Simple Module RoutingTable" alt="" coords="491,155,587,181">
+<area shape="rect" href="ned.IdealChannel.html" title="Channel IdealChannel" alt="" coords="611,155,707,181">
+<area shape="rect" href="inet.linklayer.ppp.PPPInterface.html" title="Compound Module PPPInterface" alt="" coords="731,155,827,181">
+<area shape="rect" href="inet.transport.rtp.RTPLayer.html" title="Compound Module RTPLayer" alt="" coords="851,155,928,181">
+<area shape="rect" href="inet.applications.rtpapp.RTPApplication.html" title="Simple Module RTPApplication" alt="" coords="952,155,1061,181">
+<area shape="rect" href="inet.examples.rtp.multicast1.RTPMulticast1.html" title="Network RTPMulticast1" alt="" coords="424,5,531,32">
+<area shape="rect" href="inet.examples.rtp.unicast.RTPNetwork.html" title="Network RTPNetwork" alt="" coords="555,5,648,32">

@@ -1,0 +1,17 @@
+<area shape="rect" href="inet.nodes.mpls.RSVP_LSR.html" title="Compound Module RSVP_LSR" alt="" coords="744,80,832,107">
+<area shape="rect" href="inet.networklayer.mpls.MPLS.html" title="Simple Module MPLS" alt="" coords="5,155,77,181">
+<area shape="rect" href="inet.networklayer.common.InterfaceTable.html" title="Simple Module InterfaceTable" alt="" coords="101,155,200,181">
+<area shape="rect" href="inet.base.NotificationBoard.html" title="Simple Module NotificationBoard" alt="" coords="224,155,344,181">
+<area shape="rect" href="inet.networklayer.ipv4.RoutingTable.html" title="Simple Module RoutingTable" alt="" coords="368,155,464,181">
+<area shape="rect" href="inet.networklayer.ted.LinkStateRouting.html" title="Simple Module LinkStateRouting" alt="" coords="488,155,608,181">
+<area shape="rect" href="inet.linklayer.ppp.PPPInterface.html" title="Compound Module PPPInterface" alt="" coords="632,155,728,181">
+<area shape="rect" href="inet.networklayer.mpls.LIBTable.html" title="Simple Module LIBTable" alt="" coords="752,155,824,181">
+<area shape="rect" href="inet.networklayer.ted.TED.html" title="Simple Module TED" alt="" coords="848,155,920,181">
+<area shape="rect" href="inet.nodes.inet.NetworkLayer.html" title="Compound Module NetworkLayer" alt="" coords="944,155,1043,181">
+<area shape="rect" href="inet.util.NAMTraceWriter.html" title="Simple Module NAMTraceWriter" alt="" coords="1067,155,1184,181">
+<area shape="rect" href="inet.networklayer.rsvp_te.SimpleClassifier.html" title="Simple Module SimpleClassifier" alt="" coords="1208,155,1323,181">
+<area shape="rect" href="inet.networklayer.rsvp_te.RSVP.html" title="Simple Module RSVP" alt="" coords="1347,155,1419,181">
+<area shape="rect" href="ned.IdealChannel.html" title="Channel IdealChannel" alt="" coords="1443,155,1539,181">
+<area shape="rect" href="inet.examples.mpls.net37.R37.html" title="Network R37" alt="" coords="556,5,628,32">
+<area shape="rect" href="inet.examples.mpls.net37.R37orig.html" title="Network R37orig" alt="" coords="652,5,724,32">
+<area shape="rect" href="inet.examples.mpls.testte_tunnel.RSVPTE4.html" title="Network RSVPTE4" alt="" coords="748,5,828,32">

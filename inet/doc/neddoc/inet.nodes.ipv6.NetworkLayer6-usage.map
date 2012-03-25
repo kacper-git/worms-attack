@@ -1,0 +1,8 @@
+<area shape="rect" href="inet.nodes.ipv6.NetworkLayer6.html" title="Compound Module NetworkLayer6" alt="" coords="192,80,299,107">
+<area shape="rect" href="inet.networklayer.ipv6.IPv6.html" title="Simple Module IPv6" alt="" coords="5,155,77,181">
+<area shape="rect" href="inet.networklayer.icmpv6.ICMPv6.html" title="Simple Module ICMPv6" alt="" coords="101,155,173,181">
+<area shape="rect" href="ned.IdealChannel.html" title="Channel IdealChannel" alt="" coords="197,155,293,181">
+<area shape="rect" href="inet.networklayer.ipv6.IPv6ErrorHandling.html" title="Simple Module IPv6ErrorHandling" alt="" coords="317,155,440,181">
+<area shape="rect" href="inet.networklayer.icmpv6.IPv6NeighbourDiscovery.html" title="Simple Module IPv6NeighbourDiscovery" alt="" coords="464,155,624,181">
+<area shape="rect" href="inet.nodes.ipv6.Router6.html" title="Compound Module Router6" alt="" coords="153,5,225,32">
+<area shape="rect" href="inet.nodes.ipv6.StandardHost6.html" title="Compound Module StandardHost6" alt="" coords="249,5,356,32">

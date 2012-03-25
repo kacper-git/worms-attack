@@ -1,0 +1,7 @@
+<area shape="rect" href="inet.nodes.wireless.WirelessAPWithEthSimplified.html" title="Compound Module WirelessAPWithEthSimplified" alt="" coords="277,5,469,32">
+<area shape="rect" href="inet.linklayer.etherswitch.MACRelayUnit.html" title="Module Interface MACRelayUnit" alt="" coords="5,80,112,107">
+<area shape="rect" href="inet.mobility.NullMobility.html" title="Simple Module NullMobility" alt="" coords="136,80,224,107">
+<area shape="rect" href="inet.base.NotificationBoard.html" title="Simple Module NotificationBoard" alt="" coords="248,80,368,107">
+<area shape="rect" href="ned.IdealChannel.html" title="Channel IdealChannel" alt="" coords="392,80,488,107">
+<area shape="rect" href="inet.linklayer.ethernet.EtherMAC.html" title="Simple Module EtherMAC" alt="" coords="512,80,592,107">
+<area shape="rect" href="inet.linklayer.ieee80211.Ieee80211NicAPSimplified.html" title="Compound Module Ieee80211NicAPSimplified" alt="" coords="616,80,787,107">

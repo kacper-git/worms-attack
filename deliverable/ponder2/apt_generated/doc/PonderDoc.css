@@ -1,0 +1,29 @@
+body  {
+	background-color:white
+}
+h1  {
+	font-size:36pt
+}
+p  {
+	margin-left: 0px;
+	color: black;
+}
+
+.object-title  {
+	color:black
+}
+.message-table  {
+	border-collapse:collapse;
+	border-spacing:20px
+}
+.message-description  {
+	color:black
+}
+
+.message-header, .object-header { text-align: left; background-color: #CCCCFF;  color: black; font-size: 20pt;}
+
+td,tr,th { border: 1px solid black; text-align: left; }
+
+td,th { padding: 4px }
+
+.keyword { font-weight: bold }

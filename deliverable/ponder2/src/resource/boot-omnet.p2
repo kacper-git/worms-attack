@@ -1,0 +1,47 @@
+// Import the adaptors
+factory 
+	at: "broker" put: (root load: "Ponder2Broker");
+	at: "remediation" put: (root load: "RemediationAdaptor").
+
+
+// create an event object
+event 
+	at: "intrusion" put: (factory/event create: #( "value_victim" )); 
+	at: "load" put: (factory/event create: #( "value_name" "value_index" ));
+	at: "classification" put: (factory/event create: #( "value_name" "value_source" "value_destination" "value_protocol" ));
+	at: "tick" put: (factory/event create).
+
+// create the broker and set its events
+root at: "broker" put: (factory/broker create).
+
+broker 
+	setEventMap: "intrusion" event: "event/intrusion";
+	setEventMap: "load" event: "event/load";
+	setEventMap: "classification" event: "event/classification";
+	setEventMap: "tick" event: "event/tick".
+
+// create an RPC adaptor for a remote managed object and configures it
+root at: "flowexporter" put: (factory/remediation 
+	create: "http://localhost:8080/RPC2" 
+	type: "flowexporter_one").
+
+root at: "ratelimiter" put: (factory/remediation
+	create: "http://localhost:8080/RPC2"
+	type: "ratelimiter_one").
+
+root at: "ids" put: (factory/remediation
+	create: "http://localhost:8080/RPC2"
+	type: "ids_one").
+
+
+// mapping of operations
+flowexporter 
+	addOperation: "victim:flow:idle:" remoteName: "setthreshold".
+
+ratelimiter
+	addOperation: "name:index:rate:" remoteName: "limitlink";
+	addOperation: "name:ip:rate:" remoteName: "limitip";
+	addOperation: "name:source:destination:protocol:rate:" remoteName: "limitflow".
+
+ids
+	addOperation: "name:action:" remoteName: "togglereport".

@@ -1,0 +1,4 @@
+<buildspec version="4.0">
+<dir makemake-options="--deep --nolink -O out --meta:recurse --meta:auto-include-path --meta:export-library --meta:use-exported-libs" path="." type="makemake"/>
+<dir makemake-options="--deep -o rease -O out -pREASE -ldistack -lxmlrpc_server_abyss++ -lxmlrpc_server++ -lxmlrpc_server_abyss -lxmlrpc_server -lxmlrpc_abyss -lpthread -lxmlrpc++ -lxmlrpc -lxmlrpc_util -lxmlrpc_xmlparse -lxmlrpc_xmltok --meta:auto-include-path --meta:use-exported-libs" path="src" type="makemake"/>
+</buildspec>

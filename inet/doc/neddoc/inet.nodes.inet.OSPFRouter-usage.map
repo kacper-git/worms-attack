@@ -1,0 +1,17 @@
+<area shape="rect" href="inet.nodes.inet.OSPFRouter.html" title="Compound Module OSPFRouter" alt="" coords="472,80,568,107">
+<area shape="rect" href="inet.nodes.inet.NetworkLayer.html" title="Compound Module NetworkLayer" alt="" coords="5,155,104,181">
+<area shape="rect" href="inet.networklayer.common.InterfaceTable.html" title="Simple Module InterfaceTable" alt="" coords="128,155,227,181">
+<area shape="rect" href="inet.linklayer.ethernet.EthernetInterface.html" title="Compound Module EthernetInterface" alt="" coords="251,155,371,181">
+<area shape="rect" href="inet.base.NotificationBoard.html" title="Simple Module NotificationBoard" alt="" coords="395,155,515,181">
+<area shape="rect" href="inet.networklayer.ipv4.RoutingTable.html" title="Simple Module RoutingTable" alt="" coords="539,155,635,181">
+<area shape="rect" href="ned.IdealChannel.html" title="Channel IdealChannel" alt="" coords="659,155,755,181">
+<area shape="rect" href="inet.linklayer.ppp.PPPInterface.html" title="Compound Module PPPInterface" alt="" coords="779,155,875,181">
+<area shape="rect" href="inet.networklayer.ospfv2.OSPFRouting.html" title="Simple Module OSPFRouting" alt="" coords="899,155,1000,181">
+<area shape="rect" href="inet.examples.ospfv2.backbone.Backbone.html" title="Network Backbone" alt="" coords="68,5,148,32">
+<area shape="rect" href="inet.examples.ospfv2.areas.OneNetArea.html" title="Compound Module OneNetArea" alt="" coords="172,5,263,32">
+<area shape="rect" href="inet.examples.ospfv2.fulltest.OSPF_Area1.html" title="Compound Module OSPF_Area1" alt="" coords="287,5,385,32">
+<area shape="rect" href="inet.examples.ospfv2.fulltest.OSPF_Area2.html" title="Compound Module OSPF_Area2" alt="" coords="409,5,508,32">
+<area shape="rect" href="inet.examples.ospfv2.fulltest.OSPF_Area3.html" title="Compound Module OSPF_Area3" alt="" coords="532,5,631,32">
+<area shape="rect" href="inet.examples.ospfv2.fulltest.OSPF_TestNetwork.html" title="Network OSPF_TestNetwork" alt="" coords="655,5,791,32">
+<area shape="rect" href="inet.examples.ospfv2.simpletest.SimpleTest.html" title="Network SimpleTest" alt="" coords="815,5,900,32">
+<area shape="rect" href="inet.examples.ospfv2.areas.TwoNetsArea.html" title="Compound Module TwoNetsArea" alt="" coords="924,5,1023,32">

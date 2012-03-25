@@ -1,0 +1,24 @@
+<area shape="rect" href="inet.nodes.inet.NetworkLayer.html" title="Compound Module NetworkLayer" alt="" coords="867,80,965,107">
+<area shape="rect" href="inet.networklayer.ipv4.IP.html" title="Simple Module IP" alt="" coords="620,155,692,181">
+<area shape="rect" href="inet.networklayer.ipv4.IGMP.html" title="Compound Module IGMP" alt="" coords="716,155,788,181">
+<area shape="rect" href="inet.networklayer.ipv4.ErrorHandling.html" title="Simple Module ErrorHandling" alt="" coords="812,155,911,181">
+<area shape="rect" href="inet.networklayer.ipv4.ICMP.html" title="Simple Module ICMP" alt="" coords="935,155,1007,181">
+<area shape="rect" href="ned.IdealChannel.html" title="Channel IdealChannel" alt="" coords="1031,155,1127,181">
+<area shape="rect" href="inet.networklayer.arp.ARP.html" title="Simple Module ARP" alt="" coords="1151,155,1223,181">
+<area shape="rect" href="inet.nodes.inet.BurstHost.html" title="Compound Module BurstHost" alt="" coords="5,5,85,32">
+<area shape="rect" href="inet.nodes.inet.ExtRouter.html" title="Compound Module ExtRouter" alt="" coords="109,5,189,32">
+<area shape="rect" href="inet.nodes.mpls.LDP_LSR.html" title="Compound Module LDP_LSR" alt="" coords="213,5,291,32">
+<area shape="rect" href="inet.nodes.adhoc.MFMobileHost.html" title="Compound Module MFMobileHost" alt="" coords="315,5,419,32">
+<area shape="rect" href="inet.nodes.adhoc.MobileHost.html" title="Compound Module MobileHost" alt="" coords="443,5,528,32">
+<area shape="rect" href="inet.nodes.inet.OSPFRouter.html" title="Compound Module OSPFRouter" alt="" coords="552,5,648,32">
+<area shape="rect" href="inet.nodes.inet.Router.html" title="Compound Module Router" alt="" coords="672,5,744,32">
+<area shape="rect" href="inet.nodes.mpls.RSVP_LSR.html" title="Compound Module RSVP_LSR" alt="" coords="768,5,856,32">
+<area shape="rect" href="inet.transport.rtp.RTPHost.html" title="Compound Module RTPHost" alt="" coords="880,5,952,32">
+<area shape="rect" href="inet.nodes.inet.StandardHost.html" title="Compound Module StandardHost" alt="" coords="976,5,1075,32">
+<area shape="rect" href="inet.nodes.inet.StandardHostWithDLDuplicatesGenerator.html" title="Compound Module StandardHostWithDLDuplicatesGenerator" alt="" coords="1099,5,1360,32">
+<area shape="rect" href="inet.nodes.inet.StandardHostWithDLThruputMeter.html" title="Compound Module StandardHostWithDLThruputMeter" alt="" coords="1384,5,1603,32">
+<area shape="rect" href="inet.nodes.inet.StandardHostWithULDropsGenerator.html" title="Compound Module StandardHostWithULDropsGenerator" alt="" coords="1627,5,1861,32">
+<area shape="rect" href="inet.nodes.inet.StandardHostWithULThruputMeter.html" title="Compound Module StandardHostWithULThruputMeter" alt="" coords="1885,5,2104,32">
+<area shape="rect" href="inet.nodes.inet.TCPSpoofingHost.html" title="Compound Module TCPSpoofingHost" alt="" coords="2128,5,2251,32">
+<area shape="rect" href="inet.nodes.wireless.WirelessHost.html" title="Compound Module WirelessHost" alt="" coords="2275,5,2373,32">
+<area shape="rect" href="inet.nodes.wireless.WirelessHostSimplified.html" title="Compound Module WirelessHostSimplified" alt="" coords="2397,5,2552,32">

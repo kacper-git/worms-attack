@@ -1,0 +1,5 @@
+<area shape="rect" href="inet.examples.wireless.handover.HandoverNetwork.html" title="Network HandoverNetwork" alt="" coords="235,5,355,32">
+<area shape="rect" href="inet.world.ChannelControl.html" title="Simple Module ChannelControl" alt="" coords="5,80,115,107">
+<area shape="rect" href="inet.networklayer.autorouting.FlatNetworkConfigurator.html" title="Simple Module FlatNetworkConfigurator" alt="" coords="139,80,299,107">
+<area shape="rect" href="inet.nodes.wireless.WirelessHost.html" title="Compound Module WirelessHost" alt="" coords="323,80,421,107">
+<area shape="rect" href="inet.nodes.wireless.WirelessAP.html" title="Compound Module WirelessAP" alt="" coords="445,80,536,107">

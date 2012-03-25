@@ -1,0 +1,14 @@
+<AS-Level>
+	<Transit-Node-Thresh><5>
+	<AS-Nodes><3>
+	<Parameter-P><0.4>
+	<Parameter-Delta><0.04>
+<Router-Level>
+	<R-Node-Max><10>
+	<R-Node-Min><7>
+	<Core-Ratio><5>
+	<Core-Cross-Link-Ratio><20>
+	<Hosts-Per-Edge-Max><4>
+	<Hosts-Per-Edge-Min><2>
+<Misc>
+	<Topology-File><topology_small_distack.ned>

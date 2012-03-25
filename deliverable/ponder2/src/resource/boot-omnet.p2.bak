@@ -1,0 +1,40 @@
+// Import the adaptors
+factory 
+	at: "broker" put: (root load: "Ponder2Broker");
+	at: "remediation" put: (root load: "RemediationAdaptor").
+
+
+// create an event object
+event 
+	at: "highServerLoad" put: (factory/event create: #( "value" ));
+	at: "lowServerLoad" put: (factory/event create: #( "value" ));
+	at: "highLinkUtil" put: (factory/event create: #( "value" ));
+	at: "lowLinkUtil" put: (factory/event create: #( "value" ));
+	at: "classification" put: (factory/event create: #( "value" ));
+	at: "tick" put: (factory/event create).
+
+// create the broker and set its events
+root at: "broker" put: (factory/broker create).
+
+broker 
+	setEventMap: "highServerLoad" event: "event/highServerLoad";
+	setEventMap: "lowServerLoad" event: "event/lowServerLoad";
+	setEventMap: "highLinkUtil" event: "event/highLinkUtil";
+	setEventMap: "lowLinkUtil" event: "event/lowLinkUtil";
+	setEventMap: "classification" event: "event/classification";
+	setEventMap: "tick" event: "event/tick".
+		
+// create an RMI adaptor for a remote managed object and configures it
+//root at: "ratelimiter" put: (factory/remediation 
+//	create: "rmi://localhost/RateLimiter" 
+//	type: "eu.resumenet.mechanisms.RateLimiterInterface").
+
+
+// create an RPC adaptor for a remote managed object and configures it
+root at: "flowexporter" put: (factory/remediation 
+	create: "http://localhost:8080/RPC2" 
+	type: "flowex").
+
+// mapping of operations
+flowexporter 
+	addOperation: "name:flow:idle:" remoteName: "set".

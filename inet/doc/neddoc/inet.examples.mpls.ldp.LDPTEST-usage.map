@@ -1,0 +1,9 @@
+<area shape="rect" href="inet.examples.mpls.ldp.LDPTEST.html" title="Network LDPTEST" alt="" coords="415,5,492,32">
+<area shape="rect" href="inet.nodes.inet.StandardHost.html" title="Compound Module StandardHost" alt="" coords="5,80,104,107">
+<area shape="rect" href="inet.world.NAMTrace.html" title="Simple Module NAMTrace" alt="" coords="128,80,211,107">
+<area shape="rect" href="inet.networklayer.extras.FailureManager.html" title="Simple Module FailureManager" alt="" coords="235,80,344,107">
+<area shape="rect" href="inet.examples.mpls.ldp.LDPTEST.C15.html" title="Channel C15" alt="" coords="368,80,440,107">
+<area shape="rect" href="inet.nodes.mpls.LDP_LSR.html" title="Compound Module LDP_LSR" alt="" coords="464,80,541,107">
+<area shape="rect" href="inet.examples.mpls.ldp.LDPTEST.C5.html" title="Channel C5" alt="" coords="565,80,637,107">
+<area shape="rect" href="inet.world.ScenarioManager.html" title="Simple Module ScenarioManager" alt="" coords="661,80,784,107">
+<area shape="rect" href="inet.examples.mpls.ldp.LDPTEST.C10.html" title="Channel C10" alt="" coords="808,80,880,107">

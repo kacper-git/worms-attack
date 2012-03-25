@@ -1,0 +1,16 @@
+policy at: "adaptToClassification" put: (factory/ecapolicy create). 
+policy/adaptToClassification event: event/classification. 
+policy/adaptToClassification action: [ :value_name :value_source :value_destination :value_protocol | ratelimiter name:"Inet.sas1.core0.rateLimiter" source:value_source destination:value_destination protocol:value_protocol rate:90.].
+policy/adaptToClassification active: true.
+
+policy at: "adaptToLoad" put: (factory/ecapolicy create). 
+policy/adaptToLoad event: event/load. 
+policy/adaptToLoad action: [ :value_name :value_index | ratelimiter name:"Inet.sas1.core0.rateLimiter" index:value_index rate:90.].
+policy/adaptToLoad action: [ :value_name | ids name:"Inet.sas1.core0.idsModule" action:"on".].
+policy/adaptToLoad active: true.
+
+policy at: "adaptToIntrusion" put: (factory/ecapolicy create). 
+policy/adaptToIntrusion event: event/intrusion. 
+policy/adaptToIntrusion action: [ :value_victim | flowexporter victim:"Inet.sas1.core0.flowExporter" flow:60 idle:10.].
+policy/adaptToIntrusion action: [ :value_victim | ratelimiter name:"Inet.sas1.core0.rateLimiter" ip:value_victim rate:50.]. 
+policy/adaptToIntrusion active: true.

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+ANT=apache-ant-1.7.0
+
+if [ ! -d $ANT ] ; then
+	unzip ${ANT}-bin
+fi
+if [ ! -d $ANT ] ; then
+	echo Failed to unzip ant correctly
+	exit 1
+fi
+
+ANT_HOME=`pwd`/$ANT
+export ANT_HOME
+PATH=$ANT_HOME/bin:$PATH
+export PATH
+
+# Be on the safe side and use full path name
+$ANT_HOME/bin/ant $*

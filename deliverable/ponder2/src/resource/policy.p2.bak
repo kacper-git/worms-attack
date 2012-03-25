@@ -1,0 +1,14 @@
+policy at: "adaptToClassification" put: (factory/ecapolicy create). 
+policy/adaptToClassification event: event/classification. 
+policy/adaptToClassification action: [ :value_name :value_source :value_destination | ratelimiter name:value_name rate:0 source:value_source destination:value_destination.]. 
+policy/adaptToClassification active: true.
+
+policy at: "adaptToLoad" put: (factory/ecapolicy create). 
+policy/adaptToLoad event: event/load. 
+policy/adaptToLoad action: [ :value_name :value_link | ratelimiter name:Inet.sas1.core0.rateLimiter rate:0.]. 
+policy/adaptToLoad active: true.
+
+policy at: "adaptToIntrusion" put: (factory/ecapolicy create). 
+policy/adaptToIntrusion event: event/intrusion. 
+policy/adaptToIntrusion action: [ :value_victim | flowexporter victim:value_victim flow:0 idle:0.]. 
+policy/adaptToIntrusion active: true.

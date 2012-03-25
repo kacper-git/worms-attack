@@ -1,0 +1,10 @@
+<area shape="rect" href="inet.nodes.inet.TCPSpoofingHost.html" title="Compound Module TCPSpoofingHost" alt="" coords="515,5,637,32">
+<area shape="rect" href="inet.nodes.inet.NetworkLayer.html" title="Compound Module NetworkLayer" alt="" coords="5,80,104,107">
+<area shape="rect" href="inet.networklayer.common.InterfaceTable.html" title="Simple Module InterfaceTable" alt="" coords="128,80,227,107">
+<area shape="rect" href="inet.util.NAMTraceWriter.html" title="Simple Module NAMTraceWriter" alt="" coords="251,80,368,107">
+<area shape="rect" href="inet.linklayer.ethernet.EthernetInterface.html" title="Compound Module EthernetInterface" alt="" coords="392,80,512,107">
+<area shape="rect" href="inet.applications.tcpapp.TCPSpoof.html" title="Simple Module TCPSpoof" alt="" coords="536,80,616,107">
+<area shape="rect" href="inet.base.NotificationBoard.html" title="Simple Module NotificationBoard" alt="" coords="640,80,760,107">
+<area shape="rect" href="inet.networklayer.ipv4.RoutingTable.html" title="Simple Module RoutingTable" alt="" coords="784,80,880,107">
+<area shape="rect" href="ned.IdealChannel.html" title="Channel IdealChannel" alt="" coords="904,80,1000,107">
+<area shape="rect" href="inet.linklayer.ppp.PPPInterface.html" title="Compound Module PPPInterface" alt="" coords="1024,80,1120,107">

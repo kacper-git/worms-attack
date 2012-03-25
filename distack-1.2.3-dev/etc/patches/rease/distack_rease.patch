@@ -1,0 +1,835 @@
+diff -u -r --new-file -x '*.o' -x .svn -x '*_m.*' ReaSE/src/applications/util/DistackRAOData.msg ReaSE_patched/src/applications/util/DistackRAOData.msg
+--- ReaSE/src/applications/util/DistackRAOData.msg	1970-01-01 01:00:00.000000000 +0100
++++ ReaSE_patched/src/applications/util/DistackRAOData.msg	2010-05-10 12:33:13.038431094 +0200
+@@ -0,0 +1,14 @@
++cplusplus {{
++#include "IPvXAddress.h"
++#include "ReaSEDefs.h"
++const int DISTACK_RAO_PACKET_SIZE = 48;
++}}
++struct IPvXAddress;
++
++packet DistackRAOData
++{
++	IPvXAddress requester;
++	IPvXAddress target;
++	int requesterPort;
++	int id;
++}
+\ Kein Zeilenumbruch am Dateiende.
+diff -u -r --new-file -x '*.o' -x .svn -x '*_m.*' ReaSE/src/applications/util/DistackRemoteTCPPayload.msg ReaSE_patched/src/applications/util/DistackRemoteTCPPayload.msg
+--- ReaSE/src/applications/util/DistackRemoteTCPPayload.msg	1970-01-01 01:00:00.000000000 +0100
++++ ReaSE_patched/src/applications/util/DistackRemoteTCPPayload.msg	2010-05-10 12:33:13.054421086 +0200
+@@ -0,0 +1,10 @@
++cplusplus {{
++#include "ReaSEDefs.h"
++}}
++
++packet DistackRemoteTCPPayload
++{
++	char header[];
++	char data[];
++	bool xml;
++}
+diff -u -r --new-file -x '*.o' -x .svn -x '*_m.*' ReaSE/src/networklayer/ipv4/IP_hack.cc ReaSE_patched/src/networklayer/ipv4/IP_hack.cc
+--- ReaSE/src/networklayer/ipv4/IP_hack.cc	2010-03-22 12:24:06.000000000 +0100
++++ ReaSE_patched/src/networklayer/ipv4/IP_hack.cc	2010-05-10 12:36:14.031748803 +0200
+@@ -8,8 +8,11 @@
+ 
+ IP_hack::IP_hack()
+ {
++	copyFlag = false;
++	raoActive = false;
+ 	tracingOn = false;
+ 	spoofingAllowed = false;
++
+ 	startTrace = false;
+ 	totalTrace = udpTrace = tcpTrace = icmpTrace = 0;
+ 	totalPackets = udpPackets = tcpPackets = icmpPackets = 0; 
+@@ -31,8 +34,14 @@
+ void IP_hack::initialize()
+ {
+ 	IP::initialize();
++	copyFlag = par("copyFlag").boolValue();
++	raoActive = par("raoOn").boolValue();
+ 	spoofingAllowed = par("spoofingOn").boolValue();
+ 	tracingOn = par("tracingOn").boolValue();
++	if (copyFlag)
++		EV<< "Copy flag set for module "<<getFullPath()<<"\n";
++	if(raoActive)
++		EV << "Router Alert Option (RAO) set for module "<<getFullPath()<<"\n";
+ 	if(spoofingAllowed)
+ 		EV << "Spoofing is allowed for module "<<getFullPath()<<"\n";
+ 	if(tracingOn)
+@@ -46,22 +55,22 @@
+ 		traceInterval = par("tracingInterval");
+ 		double startTime = par("traceStartTime");
+ 		if(startTime <=0)
+-		scheduleAt(simTime() + traceInterval, traceMsg);
++			scheduleAt(simTime() + traceInterval, traceMsg);
+ 		else
+-		scheduleAt(simTime() + startTime, traceMsg);
++			scheduleAt(simTime() + startTime, traceMsg);
+ 	}
+ }
+ 
+ /**
+- * Handles interval timer message.
+- *
+- * In case tracing support is activated, a periodic traceMessage is sent
+- * and received. In case of reception the recorded values (drops, frames)
+- * of the current interval are written out to vector file.
+- * Then the state variables are reset to 0 for the next interval.
+- *
+- * @param msg Message to handle
+- */
++  * Handles interval timer message.
++  *
++  * In case tracing support is activated, a periodic traceMessage is sent
++  * and received. In case of reception the recorded values (drops, frames)
++  * of the current interval are written out to vector file.
++  * Then the state variables are reset to 0 for the next interval.
++  *
++  * @param msg Message to handle
++  */
+ void IP_hack::handleMessage(cMessage *msg)
+ {
+ 	if (msg->isSelfMessage())
+@@ -102,6 +111,8 @@
+ 
+ /**
+  * Dispatch received message to correct handler.
++ * Extends the original method by a dispatcher for RAO packets
++ * received by raoIn gate.
+  *
+  * @param msg Received message to be dispatched
+  */
+@@ -121,9 +132,22 @@
+ 		IPDatagram *dgram = check_and_cast<IPDatagram *> (msg);
+ 		handlePacketFromNetwork(dgram);
+ 	}
++	else if (msg->getArrivalGate()->isName("distackSigIn"))
++	{
++		IPDatagram *dgram = check_and_cast<IPDatagram *> (msg);
++		routePacket(dgram, NULL, false);
++	}
+ 	else
+ 	{
+-		opp_error("msg received on IP_hack layer that cannot be handled\n");
++		// dispatch rao packets to rao
++		// received packet von raoIn
++		//
++		if (!raoActive)
++			opp_error("received message from raoIn but rao isn't active");
++		if (dynamic_cast<IPDatagram *> (msg))
++			handlePacketFromRAOControl((IPDatagram*) msg);
++		else if (dynamic_cast<UDPPacket*> (msg))
++			handlePacketFromRAOControl((UDPPacket*) msg);
+ 	}
+ 
+ 	if (ev.isGUI())
+@@ -131,6 +155,41 @@
+ }
+ 
+ /**
++ * Generate new packet with RAO set
++ *
++ * @param data
++ */
++void IP_hack::handlePacketFromRAOControl(cPacket *data)
++{
++	InterfaceEntry *destIE; // will be filled in by encapsulate()
++	IPDatagram *datagram = encapsulate(data, destIE);
++	//
++	// set RAO
++	//
++	datagram->setOptionCode(IPOPTION_ROUTER_ALERT);
++
++	// route packet
++	if (!datagram->getDestAddress().isMulticast())
++		routePacket(datagram, destIE, true);
++	else
++		routeMulticastPacket(datagram, destIE, NULL);
++}
++
++/**
++ * Incoming packets from raoControl are just forwarded
++ *
++ * @param datagram Incoming IP datagram to be forwarded without processing
++ */
++void IP_hack::handlePacketFromRAOControl(IPDatagram *datagram)
++{
++	// route packet
++	if (!datagram->getDestAddress().isMulticast())
++		routePacket(datagram, NULL, false);
++	else
++		routeMulticastPacket(datagram, NULL, getSourceInterfaceFrom(datagram));
++}
++
++/**
+  * Overloads original method to allow for address spoofing and tagging
+  * of attack packets.
+  * Original method encapsulates packet from transport layer into
+@@ -226,9 +285,15 @@
+ }
+ 
+ /**
+- * If tracing is performed packet counts are updated here.
++ * If copyFlag is set, we copy the first fragment of each packet
++ * and deliver it to the application.
++ * This is applied for attack detection systems to ensure that
++ * forwarding is not delayed by detection.
+  *
+- * @param datagram IP packet to be traced.
++ * Additionally, if tracing is performed packet counts are updated here.
++ * Finally, filtering is applied before forwarding the original packet.
++ *
++ * @param datagram IP packet to be copied/traced/filtered.
+  */
+ void IP_hack::handlePacketFromNetwork(IPDatagram *datagram)
+ {
+@@ -254,7 +319,17 @@
+ 		}
+ 	}
+ 
++	if (!datagram->getFragmentOffset() && copyFlag && (strstr(datagram->getName(), "DistackRe") == NULL))
++	{
++		// copy first fragment of packet
++		cMessage *forDistack = (cMessage*) datagram->dup();
++		delete forDistack->removeControlInfo();
++		send(forDistack, "distackOut");
++	}
++
++	//
+ 	// "Prerouting"
++	//
+ 
+ 	// check for header biterror
+ 	if (datagram->hasBitError())
+@@ -283,6 +358,7 @@
+ /**
+  * This method is called by handleFromNetwork and does an additional check
+  * for IP options before forwarding the packet.
++ * This is necessary to send packets with RAO on raoOut gate.
+  */
+ void IP_hack::processPacket(IPDatagram *datagram, InterfaceEntry *destIE, bool fromHL, bool checkOpts)
+ {
+@@ -318,11 +394,18 @@
+ 				//TODO
+ 				break;
+ 			case IPOPTION_ROUTER_ALERT:
+-				//TODO
++				if (raoActive)
++					sendToControl = true;
+ 				break;
+ 			default:
+ 				opp_error("unknown IP option\n");
+ 		}
++		if (sendToControl && raoActive)
++		{
++			// RAO active - send Datagram to raoOut
++			send(datagram, "raoOut");
++			return;
++		}
+ 	}
+ 
+ 	// process local or remote routing
+@@ -333,6 +416,20 @@
+ 		routeMulticastPacket(datagram, NULL, getSourceInterfaceFrom(datagram));
+ }
+ 
++/**
++ * This method is called by the simulation kernel to notify the module
++ * that the value of an existing module parameter got changed.
++ * It is used to disable packet copying during runtime of the simulation.
++ */
++void IP_hack::handleParameterChange(const char *parname)
++{
++	if (strcmp(parname, "copyFlag") == 0)
++	{
++		// copy flag parameter changed, re-read it
++		copyFlag = par("copyFlag").boolValue();
++	}
++}
++
+ void IP_hack::finish() {
+ 
+     recordScalar("Total packets", totalPackets);
+@@ -340,3 +437,4 @@
+     recordScalar("UDP packets", udpPackets);
+     recordScalar("ICMP packets", icmpPackets);
+ }
++
+diff -u -r --new-file -x '*.o' -x .svn -x '*_m.*' ReaSE/src/networklayer/ipv4/IP_hack.h ReaSE_patched/src/networklayer/ipv4/IP_hack.h
+--- ReaSE/src/networklayer/ipv4/IP_hack.h	2009-07-24 16:31:39.000000000 +0200
++++ ReaSE_patched/src/networklayer/ipv4/IP_hack.h	2010-05-10 12:37:12.938435282 +0200
+@@ -9,15 +9,17 @@
+ /**
+  * @brief Extension of the original IP protocol.
+  *
+- * Extends the original IP protocol of INET by address spoofing and
+- * packet tracing.
+- * These tasks are necessary for simulation of attacks
++ * Extends the original IP protocol of INET by address spoofing,
++ * packet tracing, packet copying to attack detection instances, 
++ * and router alert option.
++ * These tasks are necessary for simulation of attacks, attack
++ * detection, and signalling.
+  */
+ class REASE_API IP_hack : public IP
+ {
+ protected:
+ 	// service flags
+-	bool tracingOn, spoofingAllowed;
++	bool copyFlag, raoActive, tracingOn, spoofingAllowed;
+ 
+ 	// statistics
+ 	cOutVector output, tcpout, udpout, icmpout;
+@@ -41,12 +43,18 @@
+ 	IPDatagram *encapsulate(cPacket *transportPacket, InterfaceEntry *&destIE);
+ 	/// Outputs packet counts into vector file
+ 	virtual void handleMessage(cMessage *msg);
++	/// Generate new packet with RAO set
++	virtual void handlePacketFromRAOControl(cPacket *msg);
++	/// Forwards incoming packets from raoControl without processing
++	virtual void handlePacketFromRAOControl(IPDatagram *datagram);
+ 	/// Handle messages from higher layers
+ 	virtual void handleMessageFromHL(cPacket *msg);
+ 	/// Handle messages from lower layers
+ 	virtual void handlePacketFromNetwork(IPDatagram *datagram);
+-	/// Processing of IP options
++	/// Processing of IP options and RAO option
+ 	virtual void processPacket(IPDatagram *datagram, InterfaceEntry *destIE, bool fromHL, bool checkOpts);
++	/// Handle changes in module parameters
++        virtual void handleParameterChange(const char *parname);
+ };
+ 
+ #endif /*IP_HACK_H_*/
+diff -u -r --new-file -x '*.o' -x .svn -x '*_m.*' ReaSE/src/networklayer/ipv4/IP_hack.ned ReaSE_patched/src/networklayer/ipv4/IP_hack.ned
+--- ReaSE/src/networklayer/ipv4/IP_hack.ned	2009-03-18 11:16:42.000000000 +0100
++++ ReaSE_patched/src/networklayer/ipv4/IP_hack.ned	2010-05-10 12:37:49.022430946 +0200
+@@ -3,18 +3,28 @@
+ import inet.networklayer.ipv4.IP;
+ 
+ //
+-// An extension of inet.networklayer.ipv4.IP
+-// This module additionally allows for address spoofing and
+-// packet tracing
++// An extension of inet.networklayer.ipv4.IP 
++// This module additionally allows for address spoofing,
++// packet tracing, packet copying to attack detection instances, 
++// and router alert option.
+ //
+ 
+ simple IP_hack extends IP
+ {
+     parameters:
+         @class(IP_hack);
+-        bool tracingOn;
++        bool tracingOn; 
+         double tracingInterval @unit(s);
+-        double traceStartTime @unit(s);
++        double traceStartTime @unit(s); 
++        bool copyFlag; // copy the first fragment of a packet to distack
++        bool raoOn; // activate handling of packets with Router Alert Option
+         bool spoofingOn; // allow IP-Address Spoofing
++    gates:
++        input distackIn;  // currently unused
++        input distackSigIn; // for attack detection signaling 
++        input raoIn; // for IP-Router-Alert Option
++        output distackOut; // used for copied datagrams (see copyFlag)
++        output distackSigOut; // for attack detection signaling
++        output raoOut; // for IP-Router-Alert Option
+ }
+ 
+diff -u -r --new-file -x '*.o' -x .svn -x '*_m.*' ReaSE/src/nodes/inet/DDoSZombie.ned ReaSE_patched/src/nodes/inet/DDoSZombie.ned
+--- ReaSE/src/nodes/inet/DDoSZombie.ned	2010-03-16 17:26:29.000000000 +0100
++++ ReaSE_patched/src/nodes/inet/DDoSZombie.ned	2010-05-10 12:38:34.542440160 +0200
+@@ -51,6 +51,17 @@
+         }
+         tribeFloodNetwork: TribeFloodNetwork {
+             parameters:
++                //          parameters:
++                //              attackStartTime = 10,
++                //              maxPacket = 50,
++                //              packetSize = 96,
++                //              attackType = 6,
++                //              victimAddress = "145.236.0.15",
++                //              destinationPort = 80,
++                //              addressSpoofingOn = false,
++                //              sourceAddressStart = "145.236.0.12",
++                //              sourceAddressEnd = "145.236.0.12",
++                //              sourcePort = -1;
+                 @display("p=272,154;i=old/telnet");
+ 
+         }
+@@ -58,6 +69,8 @@
+             parameters:
+                 proxyARP = false;
+                 tracingOn = false;
++                copyFlagOn = false;
++                raoOn = false;
+                 spoofingOn = true;
+                 @display("p=248,247;i=block/fork;q=queue");
+ 
+diff -u -r --new-file -x '*.o' -x .svn -x '*_m.*' ReaSE/src/nodes/inet/DistackOmnetIDS.ned ReaSE_patched/src/nodes/inet/DistackOmnetIDS.ned
+--- ReaSE/src/nodes/inet/DistackOmnetIDS.ned	1970-01-01 01:00:00.000000000 +0100
++++ ReaSE_patched/src/nodes/inet/DistackOmnetIDS.ned	2010-05-10 12:38:48.622438891 +0200
+@@ -0,0 +1,121 @@
++package rease.nodes.inet;
++
++//
++// Compound module which adds TCP/IP layers to the attack detection
++// system Distack (by Mayer|Gamer)
++//
++// This module uses IP_hack layer to copy incoming packets and analyze them
++// in DistackOmnetModule. Original packets are forwarded as usually.
++
++
++import inet.base.NotificationBoard;
++import inet.linklayer.ethernet.EthernetInterface;
++import inet.linklayer.ppp.PPPInterface;
++import inet.networklayer.common.InterfaceTable;
++import inet.networklayer.ipv4.RoutingTable;
++import inet.transport.tcp.TCP;
++import inet.transport.udp.UDP;
++import inet.util.NAMTraceWriter;
++
++
++//
++// \IP router for attack detection
++//
++module DistackOmnetIDS
++{
++    parameters:
++        @node();
++        @display("b=664,475");
++        string routingFile;
++        bool raoOn;
++        string configId;
++    gates:
++        inout pppg[];
++        inout ethg[];
++    submodules:
++        namTrace: NAMTraceWriter {
++            parameters:
++                namid = -1; // auto
++                @display("p=434,68;i=block/sink");
++        }
++        notificationBoard: NotificationBoard {
++            parameters:
++                @display("p=68,68;i=block/control");
++        }
++        interfaceTable: InterfaceTable {
++            parameters:
++                @display("p=190,68;i=block/table");
++        }
++        routingTable: RoutingTable {
++            parameters:
++                IPForward = true;
++                routerId = "auto";
++                routingFile = routingFile;
++                @display("p=312,68;i=block/table");
++        }
++        networkLayer: NetworkLayer_hack {
++            parameters:
++                tracingOn = true;
++                copyFlagOn = true;
++                raoOn = raoOn;
++                spoofingOn = false;
++                @display("p=320,253;i=block/fork;q=queue");
++
++            gates:
++                ifIn[sizeof(pppg)+sizeof(ethg)];
++                ifOut[sizeof(pppg)+sizeof(ethg)];
++        }
++        distack: DistackOmnetModule {
++            parameters:
++                @display("p=320,157;i=device/firewall");
++                configId = configId;
++        }
++        tcp: TCP {
++            parameters:
++                @display("p=196,205;i=block/wheelbarrow");
++        }
++        udp: UDP {
++            parameters:
++                @display("p=445,205;i=block/transport");
++        }
++        ppp[sizeof(pppg)]: PPPInterface {
++            parameters:
++                @display("p=74,353,row,110;q=l2queue;i=block/ifcard");
++        }
++        eth[sizeof(ethg)]: EthernetInterface {
++            parameters:
++                @display("p=74,425,row,110;q=l2queue;i=block/ifcard");
++        }
++    connections allowunconnected:
++        // connections to network outside
++        for i=0..sizeof(pppg)-1 {
++            pppg[i] <--> ppp[i].phys;
++            ppp[i].netwOut --> networkLayer.ifIn[i];
++            ppp[i].netwIn <-- networkLayer.ifOut[i];
++        }
++        for i=0..sizeof(ethg)-1 {
++            ethg[i] <--> eth[i].phys;
++            eth[i].netwOut --> networkLayer.ifIn[sizeof(pppg)+i];
++            eth[i].netwIn <-- networkLayer.ifOut[sizeof(pppg)+i];
++        }
++
++        tcp.ipOut --> networkLayer.tcpIn;
++        tcp.ipIn <-- networkLayer.tcpOut;
++        udp.ipOut --> networkLayer.udpIn;
++        udp.ipIn <-- networkLayer.udpOut;
++
++        tcp.appOut++ --> distack.sigIn++;
++        tcp.appIn++ <-- distack.sigOutTCP;
++        udp.appOut++ --> distack.sigIn++;
++        udp.appIn++ <-- distack.sigOutUDP;
++
++        networkLayer.raoOut --> distack.sigIn++;
++        networkLayer.raoIn <-- distack.sigOutRAO;
++
++        networkLayer.distackSigOut --> distack.sigIn++;
++        networkLayer.distackSigIn <-- distack.sigOutIP;
++
++        networkLayer.distackOut --> distack.in;
++        networkLayer.distackIn <-- distack.out;
++}
++
+diff -u -r --new-file -x '*.o' -x .svn -x '*_m.*' ReaSE/src/nodes/inet/DistackOmnetModule.ned ReaSE_patched/src/nodes/inet/DistackOmnetModule.ned
+--- ReaSE/src/nodes/inet/DistackOmnetModule.ned	1970-01-01 01:00:00.000000000 +0100
++++ ReaSE_patched/src/nodes/inet/DistackOmnetModule.ned	2010-05-10 12:33:13.066427887 +0200
+@@ -0,0 +1,19 @@
++package rease.nodes.inet;
++
++//
++// Basic simple module for implementation of the attack detection
++// system Distack (by Mayer|Gamer)
++//
++simple DistackOmnetModule
++{
++    parameters:
++       string configId;
++    gates:
++      input  in;
++      input sigIn[];
++      output out;
++      output sigOutIP;
++      output sigOutTCP;
++      output sigOutUDP;
++      output sigOutRAO;
++}
+diff -u -r --new-file -x '*.o' -x .svn -x '*_m.*' ReaSE/src/nodes/inet/NetworkLayer_hack.ned ReaSE_patched/src/nodes/inet/NetworkLayer_hack.ned
+--- ReaSE/src/nodes/inet/NetworkLayer_hack.ned	2010-03-16 17:26:29.000000000 +0100
++++ ReaSE_patched/src/nodes/inet/NetworkLayer_hack.ned	2010-05-10 12:39:04.331356764 +0200
+@@ -3,7 +3,7 @@
+ //
+ // Network layer of an \IP node that includes IP_hack instead of the original
+ // IP implementation.
+-// IP_hack allows for spoofing, packet tracing, etc.
++// IP_hack allows for spoofing, copying of packets, packet tracing, etc.
+ // 
+ //
+ 
+@@ -25,6 +25,8 @@
+     parameters:
+         bool proxyARP;
+         bool tracingOn;
++        bool copyFlagOn;
++        bool raoOn;
+         bool spoofingOn;
+     gates:
+         input ifIn[];
+@@ -34,6 +36,9 @@
+         input rsvpIn;
+         input ospfIn;
+         input pingIn;
++        input raoIn;
++        input distackIn;
++        input distackSigIn;
+         output ifOut[];
+         output tcpOut;
+         output udpOut;
+@@ -41,6 +46,11 @@
+         output rsvpOut;
+         output ospfOut;
+         output pingOut;
++        output raoOut;
++        output distackOut;
++		output distackSigOut;
++
++
+     submodules:
+         ip: IP_hack {
+             parameters:
+@@ -48,6 +58,8 @@
+                 multicastTimeToLive = 32;
+                 fragmentTimeout = 60s;
+                 protocolMapping = "6:0,17:1,1:2,2:3,46:4,89:5,132:6,254:7,135:7";
++                copyFlag = copyFlagOn;
++                raoOn = raoOn;
+                 spoofingOn = spoofingOn;
+                 tracingOn = tracingOn;
+                 @display("p=85,95;i=block/routing;q=queue");
+@@ -98,6 +110,18 @@
+         ip.transportOut[6] --> sctpOut;     //I.R.
+         ip.transportIn[6] <-- sctpIn;
+ 
++        //Router Alert Option
++        ip.raoIn <-- raoIn;
++        ip.raoOut --> raoOut;
++
++        //distack copy-flag
++        ip.distackIn <-- distackIn;
++        ip.distackOut --> distackOut;
++
++		//distack signaling
++		ip.distackSigIn <-- distackSigIn;
++		ip.distackSigOut --> distackSigOut;
++
+         icmp.pingOut --> pingOut;
+         icmp.pingIn <-- pingIn;
+ 
+diff -u -r --new-file -x '*.o' -x .svn -x '*_m.*' ReaSE/src/nodes/inet/TraceRouter.ned ReaSE_patched/src/nodes/inet/TraceRouter.ned
+--- ReaSE/src/nodes/inet/TraceRouter.ned	2009-03-18 11:16:43.000000000 +0100
++++ ReaSE_patched/src/nodes/inet/TraceRouter.ned	2010-05-10 12:39:23.406441512 +0200
+@@ -50,6 +50,8 @@
+         networkLayer: NetworkLayer_hack {
+             parameters:
+                 tracingOn = true;
++                copyFlagOn = false;
++                raoOn = false;
+                 spoofingOn = false;
+                 @display("p=200,141;i=block/fork;q=queue");
+             gates:
+diff -u -r --new-file -x '*.o' -x .svn -x '*_m.*' ReaSE/src/nodes/inet/WormHost.ned ReaSE_patched/src/nodes/inet/WormHost.ned
+--- ReaSE/src/nodes/inet/WormHost.ned	2009-03-18 11:16:43.000000000 +0100
++++ ReaSE_patched/src/nodes/inet/WormHost.ned	2010-05-10 12:42:38.722495501 +0200
+@@ -6,6 +6,7 @@
+ import inet.networklayer.common.InterfaceTable;
+ import inet.networklayer.ipv4.RoutingTable;
+ import inet.util.NAMTraceWriter;
++import rease.nodes.inet.NetworkLayer_hack;
+ import rease.applications.worm.UDPWormVictim;
+ 
+ //
+@@ -27,14 +28,17 @@
+             parameters:
+                 namid = namid;
+                 @display("p=60,310;i=block/sink");
++
+         }
+         notificationBoard: NotificationBoard {
+             parameters:
+                 @display("p=60,70;i=block/control");
++
+         }
+         interfaceTable: InterfaceTable {
+             parameters:
+                 @display("p=60,150;i=block/table");
++
+         }
+         routingTable: RoutingTable {
+             parameters:
+@@ -42,6 +46,7 @@
+                 routerId = "";
+                 routingFile = "";
+                 @display("p=60,230;i=block/table");
++
+         }
+         udpWormVictim: UDPWormVictim {
+             parameters:
+@@ -51,8 +56,11 @@
+             parameters:
+                 proxyARP = false;
+                 tracingOn = false;
++                copyFlagOn = false;
++                raoOn = false;
+                 spoofingOn = false;
+                 @display("p=248,247;i=block/fork;q=queue");
++
+             gates:
+                 ifIn[sizeof(pppg)+sizeof(ethg)];
+                 ifOut[sizeof(pppg)+sizeof(ethg)];
+@@ -84,5 +92,6 @@
+             eth[i].netwOut --> networkLayer.ifIn[sizeof(pppg)+i];
+             eth[i].netwIn <-- networkLayer.ifOut[sizeof(pppg)+i];
+         }
++
+ }
+ 
+Binärdateien ReaSE/src/rease and ReaSE_patched/src/rease sind verschieden.
+diff -u -r --new-file -x '*.o' -x .svn -x '*_m.*' ReaSE/src/transport/contract/DistackTCPSocketMap.cc ReaSE_patched/src/transport/contract/DistackTCPSocketMap.cc
+--- ReaSE/src/transport/contract/DistackTCPSocketMap.cc	1970-01-01 01:00:00.000000000 +0100
++++ ReaSE_patched/src/transport/contract/DistackTCPSocketMap.cc	2010-05-10 12:33:13.086441037 +0200
+@@ -0,0 +1,72 @@
++//
++// Copyright (C) 2004 Andras Varga
++//
++// This program is free software; you can redistribute it and/or
++// modify it under the terms of the GNU General Public License
++// as published by the Free Software Foundation; either version 2
++// of the License, or (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with this program; if not, write to the Free Software
++// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
++//
++
++#include <omnetpp.h>
++#include "DistackTCPSocketMap.h"
++
++TCPSocket* DistackTCPSocketMap::findSocketFor(int connId)
++{
++	SocketMap::iterator i = socketMap.find(connId);
++	ASSERT(i == socketMap.end() || i->first == i->second->getConnectionId());
++	return (i == socketMap.end()) ? NULL : i->second;
++}
++
++TCPSocket* DistackTCPSocketMap::findSocketFor(cMessage* msg)
++{
++	TCPCommand* ind = dynamic_cast<TCPCommand*> (msg->getControlInfo());
++	if (!ind)
++		opp_error("DistackTCPSocketMap: findSocketFor(): no TCPCommand control info in message (not from TCP?)");
++	int connId = ind->getConnId();
++	SocketMap::iterator i = socketMap.find(connId);
++	ASSERT(i == socketMap.end() || i->first == i->second->getConnectionId());
++	return (i == socketMap.end()) ? NULL : i->second;
++}
++
++TCPSocket* DistackTCPSocketMap::findSocketFor(IPvXAddress adr)
++{
++	SocketMap::iterator i = socketMap.begin();
++	SocketMap::iterator iend = socketMap.end();
++	for (; i != iend; i++)
++	{
++		if ((i->second)->getRemoteAddress() == adr)
++		{
++			return i->second;
++		}
++	}
++	return NULL;
++}
++
++void DistackTCPSocketMap::addSocket(TCPSocket* socket)
++{
++	ASSERT(socketMap.find(socket->getConnectionId()) == socketMap.end());
++	socketMap[socket->getConnectionId()] = socket;
++}
++
++TCPSocket* DistackTCPSocketMap::removeSocket(TCPSocket* socket)
++{
++	SocketMap::iterator i = socketMap.find(socket->getConnectionId());
++	if (i != socketMap.end())
++		socketMap.erase(i);
++	return socket;
++}
++
++void DistackTCPSocketMap::deleteSockets()
++{
++	for (SocketMap::iterator i = socketMap.begin(); i != socketMap.end(); ++i)
++		delete i->second;
++}
+diff -u -r --new-file -x '*.o' -x .svn -x '*_m.*' ReaSE/src/transport/contract/DistackTCPSocketMap.h ReaSE_patched/src/transport/contract/DistackTCPSocketMap.h
+--- ReaSE/src/transport/contract/DistackTCPSocketMap.h	1970-01-01 01:00:00.000000000 +0100
++++ ReaSE_patched/src/transport/contract/DistackTCPSocketMap.h	2010-05-10 12:33:13.086441037 +0200
+@@ -0,0 +1,93 @@
++//
++// Copyright (C) 2004 Andras Varga
++//
++// This program is free software; you can redistribute it and/or
++// modify it under the terms of the GNU General Public License
++// as published by the Free Software Foundation; either version 2
++// of the License, or (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with this program; if not, write to the Free Software
++// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
++//
++
++
++#ifndef __DISTACKTCPSOCKETMAP_H
++#define __DISTACKTCPSOCKETMAP_H
++
++#include <map>
++#include <omnetpp.h>
++#include "TCPSocket.h"
++#include "IPvXAddress.h"
++#include "ReaSEDefs.h"
++
++
++
++/**
++ * Small utility class for managing a large number of TCPSocket objects.
++ */
++//TBD: need for lookup could be eliminated by adding a void *yourPtr into TCPConnection and TCPCommand
++class REASE_API DistackTCPSocketMap
++{
++	protected:
++		typedef std::map<int,TCPSocket*> SocketMap;
++		SocketMap socketMap;
++	public:
++	/**
++	 * Constructor.
++	 */
++	DistackTCPSocketMap() {}
++
++	/**
++	 * Destructor. Does NOT delete the TCPSocket objects.
++	 */
++	~DistackTCPSocketMap() {}
++
++	/**
++	 * Finds the socket by connId.
++	 */
++	TCPSocket* findSocketFor(int connd);
++	
++	/**
++	 * Finds the socket (by connId) for the given message. The message
++	 * must have arrived from TCP, and must contain a TCPCommand
++	 * control info object. The method returns NULL if the socket was
++	 * not found, and throws an error if the message doesn't contain
++	 * a TCPCommand.
++	 */
++	TCPSocket* findSocketFor(cMessage* msg);
++
++	/**
++	 * Finds the socket for the given IP Address.
++	 * The method returns NULL if the socket was not found.
++	 */
++	TCPSocket* findSocketFor(IPvXAddress adr);
++
++	/**
++	 * Registers the given socket. Should not be called multiple times
++	 * for one socket object.
++	 */
++	void addSocket(TCPSocket* socket);
++
++	/**
++	 * Removes the given socket from the data structure.
++	 */
++	TCPSocket* removeSocket(TCPSocket* socket);
++
++	/**
++	 * Returns the number of sockets stored.
++	 */
++	int size() {return socketMap.size();}
++
++	/**
++	 * Deletes the socket objects.
++	 */
++	void deleteSockets();
++};
++
++#endif

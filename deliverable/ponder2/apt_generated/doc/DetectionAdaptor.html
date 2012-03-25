@@ -1,0 +1,21 @@
+<html>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<title>DetectionAdaptor</title>
+<link rel='stylesheet' type='text/css' href='PonderDoc.css' />
+</head>
+<body>
+<h1 class='object-title'>DetectionAdaptor</h1>
+<p class='object_description'>
+ Implements an adaptor object for Ponder2 to communicate with external detection mechanisms. External detection mechanisms must implement the interface eu.resumenet.mechanisms.DetectionInterface. An instance of DetectionAdaptor then locates the external mechanisms and provides a wrapper for accessing it from a Ponder2 application (for example, to deactivate a particular kind of detection). 
+</p>
+<table class='message-table'><tr><th colspan='3' class='message-header'>Factory Messages</th></tr>
+<tr><th>Operation</th><th>Description</th>
+</tr>
+<td class='message-prototype'><span class='keyword'>create:</span> <span class='argument'>objName</span> <span class='keyword'>host:</span> <span class='argument'>serverName</span> </td>
+<td class='message-description'> Creates an instance of the adaptor by locating the RMI remote object that this adaptor will refer to, based on the server and object name used by the mechanism. </td>
+</tr>
+</table><p/>
+<table class='message-table'><tr><th colspan='3' class='message-header'>Operational Messages</th></tr>
+<tr><th>Operation</th><th>Return</th><th>Description</th>
+</table><p/>

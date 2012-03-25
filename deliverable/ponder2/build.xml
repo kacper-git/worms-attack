@@ -1,0 +1,121 @@
+<project name="Ponder2" default="run" basedir=".">
+
+	<property name="build_classes" value="bin" />
+	<property name="sources" value="src" />
+	<property name="lib" value="lib" />
+	<property name="apt.generated" value="apt_generated" />
+	
+	<property name="antlr.jar" value="${lib}/antlr-runtime-3.0.jar" />						<!-- Ponder2 stuff -->
+	<property name="ponder2.jar" value="${lib}/ponder2.jar" />								<!-- Ponder2 stuff -->
+	<property name="tools.jar" value="${lib}/tools.jar" />
+	<!--property name="classes.jar" value="${lib}/classes.jar" /-->
+
+	<property name="xmlrpc-client-3.1.3.jar" value="${lib}/xmlrpc-client-3.1.3.jar" /> 		<!-- XMLRPC stuff -->
+	<property name="xmlrpc-common-3.1.3.jar" value="${lib}/xmlrpc-common-3.1.3.jar" />		<!-- XMLRPC stuff -->
+	<property name="ws-commons-util-1.0.2.jar" value="${lib}/ws-commons-util-1.0.2.jar" />	<!-- XMLRPC stuff -->
+	<property name="commons-logging-1.1.jar" value="${lib}/commons-logging-1.1.jar" />		<!-- XMLRPC stuff -->
+
+	<pathconvert property="ponder.codebase" targetos="unix">
+		<path path="${basedir}/${ponder2.jar}" />
+		<filtermapper>
+			<replacestring from=" " to="%20" />
+		</filtermapper>
+	</pathconvert>
+	
+	<pathconvert property="integration.codebase" targetos="unix">
+		<path path="${basedir}/${build_classes}" />
+		<filtermapper>
+			<replacestring from=" " to="%20" />
+		</filtermapper>
+	</pathconvert>
+
+	<property name="codebase" value="file:///${ponder.codebase} file:///${integration.codebase}/" />
+
+	<path id="classpath">
+		<path path="${build_classes}" />
+		<path path="${sources}" />
+		<pathelement location="${ponder2.jar}" />
+		<pathelement location="${antlr.jar}" />
+		<pathelement location="${tools.jar}" />
+		<!--pathelement location="${classes.jar}" /-->
+		<pathelement location="${xmlrpc-client-3.1.3.jar}" />
+		<pathelement location="${xmlrpc-common-3.1.3.jar}" />
+		<pathelement location="${ws-commons-util-1.0.2.jar}" />
+		<pathelement location="${commons-logging-1.1.jar}" />
+	</path>
+
+	<target name="boot" if="boot">
+		<property name="bootarg" value="-boot ${boot}" />
+	</target>
+	
+	<!-- ================================= 
+          target: clean              
+         ================================= -->
+	<target name="clean" description="--> removes all generated files">
+		<delete dir="${build_classes}" failonerror="false" />
+		<delete includeemptydirs="true" failonerror="false">
+			<fileset dir="${apt.generated}" includes="**/*" />
+		</delete>
+	</target>
+
+	<!-- ================================= 
+          target: build              
+         ================================= -->
+	<target name="build" description="--> compiles everything and copies documentation to ./doc">
+		<mkdir dir="${apt.generated}" />
+		<mkdir dir="${build_classes}" />
+		<apt compile="true" preprocessdir="${apt.generated}" srcdir="${sources}" destdir="${build_classes}">
+			<classpath>
+				<pathelement location="${ponder2.jar}" />
+				<pathelement location="${antlr.jar}" />
+				<pathelement location="${tools.jar}" />
+				<!--pathelement location="${classes.jar}" /-->
+				<pathelement location="${xmlrpc-client-3.1.3.jar}" />
+				<pathelement location="${xmlrpc-common-3.1.3.jar}" />
+				<pathelement location="${ws-commons-util-1.0.2.jar}" />
+				<pathelement location="${commons-logging-1.1.jar}" />
+			</classpath>
+		</apt>
+		<rmic base="${build_classes}" includes="**/*.class" verify="yes">
+			<classpath>
+				<pathelement location="${ponder2.jar}" />
+				<pathelement location="${antlr.jar}" />
+                                <pathelement location="${tools.jar}" />
+				<!--pathelement location="${classes.jar}" /-->
+				<pathelement location="${xmlrpc-client-3.1.3.jar}" />
+				<pathelement location="${xmlrpc-common-3.1.3.jar}" />
+				<pathelement location="${ws-commons-util-1.0.2.jar}" />
+				<pathelement location="${commons-logging-1.1.jar}" />
+			</classpath>
+		</rmic>
+	</target>
+
+	<!-- ================================= 
+          target: rebuild              
+         ================================= -->
+	<target name="rebuild" depends="clean,build" description="--> cleans and rebuilds the system" />
+
+	<!-- ================================= 
+          target: rmi             
+         ================================= -->
+	<target name="rmi" depends="build" description="--> checks that rmiregistry is running or starts it">
+		<java classname="net.ponder2.support.CheckRMI" fork="true">
+			<classpath refid="classpath" />
+			<jvmarg value="-Djava.rmi.server.codebase=${codebase}" />
+			<arg line="-rmi -" />
+		</java>
+	</target> 
+
+	<!-- ================================= 
+          target: run              
+         ================================= -->
+	<target name="run" depends="build" description="--> runs the Ponder2 SMC">
+		<java classname="net.ponder2.SelfManagedCell" fork="true">
+			<classpath refid="classpath" />
+			<!--jvmarg value="-Djava.rmi.server.codebase=${codebase}" />
+			<jvmarg value="-Djava.security.policy=${basedir}/java.policy" /-->
+			<arg line="-boot boot-omnet.p2 -boot policy.p2 ${bootarg} ${autharg}" />
+		</java>
+	</target>
+
+</project>

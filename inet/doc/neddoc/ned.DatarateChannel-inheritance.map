@@ -1,0 +1,6 @@
+<area shape="rect" href="ned.DatarateChannel.html" title="Channel DatarateChannel" alt="" coords="295,5,412,32">
+<area shape="rect" href="inet.examples.ethernet.lans.cable.html" title="Channel cable" alt="" coords="5,80,77,107">
+<area shape="rect" href="inet.examples.ethernet.lans.ethernetline.html" title="Channel ethernetline" alt="" coords="101,80,189,107">
+<area shape="rect" href="inet.examples.inet.tcpwindowscale.LFNPath.html" title="Channel LFNPath" alt="" coords="213,80,285,107">
+<area shape="rect" href="inet.examples.inet.tcptimestamps.NormalPath.html" title="Channel NormalPath" alt="" coords="309,80,397,107">
+<area shape="rect" href="inet.examples.emulation.traceroute.pppline.html" title="Channel pppline" alt="" coords="421,80,493,107">

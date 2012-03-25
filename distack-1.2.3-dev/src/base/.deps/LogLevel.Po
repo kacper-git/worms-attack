@@ -1,0 +1,3 @@
+LogLevel.o: common/LogLevel.cpp common/LogLevel.h
+
+common/LogLevel.h:

@@ -1,0 +1,22 @@
+<html>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<title>PonderTalk Object Reference</title>
+<link rel='stylesheet' type='text/css' href='PonderDoc.css' />
+</head>
+<body>
+<h1 class='object-title'>PonderTalk Object Reference</h1>
+
+<table class='object-table'><tr><th colspan='2' class='object-header'>Managed Object</th></tr>
+<tr>
+<td><a href="DetectionAdaptor.html">DetectionAdaptor</a></td>
+<td> Implements an adaptor object for Ponder2 to communicate with external detection mechanisms. External detection mechanisms must implement the interface eu.resumenet.mechanisms.DetectionInterface. An instance of DetectionAdaptor then locates the external mechanisms and provides a wrapper for accessing it from a Ponder2 application (for example, to deactivate a particular kind of detection). </td>
+</tr>
+<tr>
+<td><a href="Ponder2Broker.html">Ponder2Broker</a></td>
+<td> Provides an access interface to Ponder2 so external objects can publish events into the policy system. By default, Ponder2Broker is initialised as an RMI object, so external applications can locate it and inject events into Ponder2. Most likely to be used by external detection objects to signal the detection of a challenge. </td>
+</tr>
+<tr>
+<td><a href="RemediationAdaptor.html">RemediationAdaptor</a></td>
+<td> Implements an adaptor object for Ponder2 to communicate with external remediation mechanisms. External remediation mechanisms must implement the interface eu.resumenet.mechanisms.RemediationInterface. An instance of RemediationAdaptor then locates the external mechanisms and provides a wrapper for accessing it from a Ponder2 application (so policies can execute actions on it). </td>
+</tr>

@@ -1,0 +1,113 @@
+
+<triggerconf>
+	<module name="General">
+			<submodule name="Log">
+				<configitem name="Loglevel">debug</configitem>
+				<configitem name="Logtype">file</configitem>
+			</submodule>
+		<submodule name="Network">
+			<configitem name="Interface">eth1</configitem>
+			<configitem name="Promiscuous">0</configitem>
+			<configitem name="CaptureLength">0</configitem> <!-- 0 means capture complete packet -->
+			<configitem name="TraceReplaySpeedup">1.0</configitem>
+			<configitem name="ChecksumCheck">0</configitem>
+		</submodule>
+		<submodule name="Remote">
+			<configitem name="Neighbors">0.1.0.1,0.2.0.1,0.3.0.2</configitem>
+			<configitem name="Messaging">OMNET_PATH</configitem>
+		</submodule>
+		<submodule name="Queue">
+			<configitem name="MaxPackets">0</configitem> <!-- limit the queue length in packets, 0 means infinite queue -->
+			<configitem name="MaxBytes">0</configitem> <!-- limit the queue length in bytes, 0 means infinite queue -->
+		</submodule>
+	</module>
+	<module name="Modules">
+		<submodule library="ModuleSamplingNoutOfN" name="SamplingChannel1">
+			<configitem name="n">3</configitem>
+			<configitem name="N">10</configitem>
+		</submodule>
+		<submodule library="ModuleSamplingSystematicTimeBased" name="SamplingChannel2">
+			<configitem name="SamplingDuration">10</configitem>
+			<configitem name="SelectionDuration">3</configitem>
+		</submodule>
+		<submodule library="ModuleSamplingSystematicCountBased" name="SamplingChannel4">
+			<configitem name="SamplingCount">10</configitem>
+			<configitem name="SelectionCount">3</configitem>
+		</submodule>
+		<submodule library="ModuleSamplingUniformProbabilistic" name="SamplingChannel5">
+			<configitem name="Probability">30</configitem>
+		</submodule>
+		<submodule library="ModuleAnalyzerAggregateWatch" name="AggregateModule">
+			<configitem name="AlphaAvg">0.5</configitem>
+			<configitem name="AlphaDev">0.1</configitem>
+			<configitem name="AlphaLearn">0.5</configitem>
+			<configitem name="AlphaRed">0.1</configitem>
+			<configitem name="Beta">2.0</configitem>
+			<configitem name="ExceedThreshold">2</configitem>
+			<configitem name="FrameSizeBorders">0,70,300,600,1000,65000</configitem>
+			<configitem name="Gamma">3.0</configitem>
+			<configitem name="TimerModule">SyncTimer</configitem>
+			<configitem name="LearningIntervals">5</configitem>
+		</submodule>
+		<submodule library="ModuleOutputterPlotter" name="Plotter">
+			<configitem name="OutFilename">distack_ModuleOutputterPlotter.txt</configitem>
+		</submodule>
+		<submodule library="ModuleCollectorAddressSpace" name="AddrSpaceCollector">
+			<configitem name="RoutingTableFilename"/>
+			<configitem name="TimerModule">SyncTimer</configitem>
+			<configitem name="HistoryLength">5</configitem>
+		</submodule>
+		<submodule library="ModuleCollectorAggregateThreshold" name="ThresholdCollector">
+			<configitem name="HistoryLength">5</configitem>
+		</submodule>
+		<submodule library="ModuleAnalyzerAddressSpace" name="SecondStageAnalyzer">
+			<configitem name="SubnetChangePercent">60</configitem>
+			<configitem name="ActiveSubnetPackets">10</configitem>
+			<configitem name="ActiveSubnetRelation">1.5</configitem>
+		</submodule>
+		<submodule library="ModuleUtilityTimer" name="SyncTimer">
+			<configitem name="Interval">1000</configitem>
+		</submodule>
+		  <submodule library="ModuleAnalyzerProtocolAnomaly" name="DDoSDetection">
+			  <configitem name="Interval">1000</configitem>
+			  <configitem name="Anomalies">ANOMALY_KIND_TCP_IN_SYNACK_ANOMALY,ANOMALY_KIND_TCP_RST_ANOMALY(WORM),ANOMALY_KIND_ICMP_PORT_UNREACHABLE_ANOMALY</configitem>
+		</submodule>
+		<submodule library="ModuleUtilityIpLister" name="IpLister">
+			<configitem name="OutFilename">distack_ModuleUtilityIpLister.txt</configitem>
+			<configitem name="SubnetMasking">255.255.255.0</configitem>
+		</submodule>
+		<submodule library="ModuleFilterProtocol" name="ProtocolFilter">
+			<configitem name="Protocol">TCP</configitem>
+			<configitem name="Inverse">1</configitem>
+		</submodule>
+		<submodule library="ModuleFilterSubnet" name="SubnetFilter">
+			<configitem name="Address">131.2.1.2</configitem>
+			<configitem name="SubnetMask">255.255.255.0</configitem>
+			<configitem name="Inverse">1</configitem>
+		</submodule>
+	</module>
+	<module name="Channels">
+<!--		<submodule name="StageOneA" stage="0">
+			<configitem name="1">Plotter</configitem>
+		</submodule> -->
+		<submodule name="StageOneC" stage="1">
+			<configitem name="1">IpLister</configitem>
+		</submodule>
+		<submodule name="StageOneB" stage="1">
+			<configitem name="1">AggregateModule</configitem>
+			<configitem name="2">ThresholdCollector</configitem>
+		</submodule>
+		<submodule name="AddressSpace" stage="1">
+			<configitem name="1">AddrSpaceCollector</configitem>
+		</submodule>
+		<submodule name="BaseUtility" stage="1">
+			<configitem name="1">SyncTimer</configitem>
+		</submodule>
+		<submodule name="StageTwo" stage="2">
+			<configitem name="1">SecondStageAnalyzer</configitem>
+		</submodule>
+		<submodule name="AnomalyDetection" stage="3">
+			<configitem name="1">DDoSDetection</configitem>
+		</submodule>
+	</module>
+</triggerconf>
