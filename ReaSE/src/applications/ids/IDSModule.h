@@ -24,33 +24,57 @@
 #include "INETDefs.h"
 #include "IPAddress.h"
 #include <string>
+#include <map>
+#include <set>
+#include <iostream>
 
 using namespace std;
 
-class INET_API IDSModule : public cSimpleModule
-{
-protected:
-    virtual void initialize(int stage);
-    virtual void handleMessage(cMessage *msg);
-
-	virtual void finish();
-	long packetCount;
+class Ratio {
+	long long ghost_conn;
+	long long real_conn; //init value
 public:
-	char* victim_ip;
-	  virtual void setReport(string action);
+	bool blocked;
+
+public:
+	Ratio() :
+		ghost_conn(0), real_conn(1), blocked(false) {
+	}
+	;
+
+	void incGhost() {
+		++ghost_conn;
+	}
+
+	void incReal() {
+		++real_conn;
+	}
+
+	double getRatio() {
+		//cout << (double) ghost_conn / (double) (ghost_conn + real_conn) << endl;
+		return (double) ghost_conn / (double) (ghost_conn + real_conn);
+	}
+
+	long long getGhost(){
+		return this->ghost_conn;
+	}
 };
 
-//Definition of IDS 
-class IDS: cObject {
+class INET_API IDSModule: public cSimpleModule {
 public:
-	IPAddress destination_ip;
-	unsigned int packet_count;
-	bool seen;
-	bool start;
-	IDS();
-	~IDS();
+	void setReport(string report);
+protected:
+	virtual void initialize(int stage);
+	virtual void handleMessage(cMessage *msg);
+
+	virtual void finish();
+	double dropRatio;
+	int treshold;
+	std::set<int> blockedIPs;
+	std::map<uint32, Ratio> ratio_table;
+
+
 };
 
 #endif /* IDSMODULE_H_ */
-
 

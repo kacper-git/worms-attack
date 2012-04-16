@@ -39,6 +39,10 @@
 #include <sstream>
 #include <fstream>
 
+#include "stdlib.h"
+
+#include "IPBlock_m.h"
+
 using namespace std;
 
 Define_Module ( RateLimiter);
@@ -71,6 +75,17 @@ void RateLimiter::initialize(int stage) {
 }
 
 void RateLimiter::handleMessage(cMessage *message) {
+	if(message->getArrivalGate()->isName("fromIDS")){
+		//blockedIPs.insert(atoi(message->getName()));
+		cout << "now blocking " << message->getName();
+		IPBlock* msg = static_cast<IPBlock*>(message);
+		cout << msg->getIPAddress() << endl;
+		if (msg->getBlock())
+			blockedIPs.insert(msg->getIPAddress());
+		else
+			blockedIPs.erase(msg->getIPAddress());
+		delete message;
+	}
 	if (message->getArrivalGate()->isName("ifIn_ppp")) {
 		if (link_block[message->getArrivalGate()->getIndex()] == true) {
 			to_block.push_back(message->getId());
@@ -100,6 +115,12 @@ void RateLimiter::handleMessage(cMessage *message) {
 		IPDatagram *datagram = check_and_cast<IPDatagram *> (packet);
 		IPAddress source_ip = datagram->getSrcAddress();
 		IPAddress destination_ip = datagram->getDestAddress();
+
+		if (blockedIPs.find(source_ip.getInt()) != blockedIPs.end()) {
+			delete message;
+			return;
+		}
+
 		//cerr << destination_ip << endl;
 		int protocol = datagram->getTransportProtocol();
 		//IP blocking
@@ -186,7 +207,7 @@ void RateLimiter::addIPBlock(string ip, int rate) {
 		}
 	}
 	if (to_add == true) {
-		cerr << simTime().dbl() << ": Added IP: " << ip << endl;
+		cerr << getFullPath() << ": " << simTime().dbl() << ": Added IP: " << ip << endl;
 		ip_block.push_back(conversion);
 		cerr << conversion << " " << rate << endl;
 		ip_block_rate.push_back(rate);

@@ -143,4 +143,6 @@ module DistackOmnetIDS
         flowExporter.distack --> idsModule.in;
         idsModule.distack --> distack.in;
         idsModule.out --> udp.appIn++;
+        
+        idsModule.toRateLimiter --> rateLimiter.fromIDS;
 }

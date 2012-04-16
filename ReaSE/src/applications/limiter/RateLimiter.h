@@ -24,6 +24,7 @@
 #include "INETDefs.h"
 #include "IPAddress.h"
 #include <string>
+#include <set>
 
 using namespace std;
 
@@ -40,6 +41,7 @@ protected:
 	double count;
 	long seen;
 	long unseen;
+	std::set <int> blockedIPs;
 
 public:
 	virtual void addLinkBlock(int index, int rate);

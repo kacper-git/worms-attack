@@ -5,8 +5,10 @@
 #include "IPvXAddress.h"
 #include "UDPSocket.h"
 #include "ReaSEDefs.h"
+#include "WormStatisticCollector.h"
 
 const int FIRST_ATTACK_ID_OF_WORM_SPREAD = 10000;
+
 
 /**
  * @brief This class implements a generator for a worm propagation.
@@ -44,6 +46,9 @@ protected:
 	int attackTag;
 	/// Length of probing packets
 	int packetLength;
+
+	WormStatisticCollector *wormStatisticCollector;
+
 
 public:
 	UDPWormVictim();

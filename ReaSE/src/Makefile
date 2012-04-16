@@ -103,6 +103,7 @@ OBJS = \
     $O/applications/udpApp/GenericUDPApplicationTimeout.o \
     $O/applications/udpApp/GenericUDPApplication.o \
     $O/applications/worm/UDPWormVictim.o \
+    $O/applications/worm/WormStatisticCollector.o \
     $O/base/TrafficProfileManager.o \
     $O/base/ConnectionManager.o \
     $O/networklayer/autorouting/TGMNetworkConfigurator.o \
@@ -115,7 +116,7 @@ OBJS = \
     $O/transport/udp/UDP_hack.o \
     $O/applications/flow/flow_message_m.o \
     $O/applications/generic/GenericApplicationMessage_m.o \
-    $O/applications/ids/IDS_message_m.o \
+    $O/applications/ids/IPBlock_m.o \
     $O/applications/util/DistackRAOData_m.o \
     $O/applications/util/DistackRemoteTCPPayload_m.o \
     $O/applications/worm/UDPWormQueryMessage_m.o \
@@ -127,7 +128,7 @@ OBJS = \
 MSGFILES = \
     applications/flow/flow_message.msg \
     applications/generic/GenericApplicationMessage.msg \
-    applications/ids/IDS_message.msg \
+    applications/ids/IPBlock.msg \
     applications/util/DistackRAOData.msg \
     applications/util/DistackRemoteTCPPayload.msg \
     applications/worm/UDPWormQueryMessage.msg \
@@ -351,33 +352,34 @@ $O/applications/generic/GenericApplicationMessage_m.o: applications/generic/Gene
 $O/applications/ids/IDSModule.o: applications/ids/IDSModule.cc \
 	$(INET_PROJ)/src/transport/contract/UDPControlInfo_m.h \
 	$(INET_PROJ)/src/networklayer/ipv4/IPDatagram_m.h \
-	applications/ids/IDS_message_m.h \
+	applications/ids/IPBlock_m.h \
 	$(INET_PROJ)/src/base/INETDefs.h \
 	applications/classifier/Classifier.h \
 	applications/ids/IDSModule.h \
 	$(INET_PROJ)/src/transport/tcp/TCPSegment.h \
 	$(INET_PROJ)/src/transport/sctp/SCTPMessage_m.h \
+	$(INET_PROJ)/src/networklayer/contract/IPControlInfo.h \
 	$(INET_PROJ)/src/transport/udp/UDPPacket_m.h \
 	$(INET_PROJ)/src/transport/contract/UDPSocket.h \
 	$(INET_PROJ)/src/transport/tcp/TCPSegment_m.h \
 	$(INET_PROJ)/src/networklayer/contract/IPAddressResolver.h \
+	$(INET_PROJ)/src/networklayer/contract/IPControlInfo_m.h \
 	applications/flow/FlowExporter.h \
 	applications/limiter/RateLimiter.h \
 	$(INET_PROJ)/src/networklayer/contract/IPvXAddress.h \
 	$(INET_PROJ)/src/transport/udp/UDPPacket.h \
 	$(INET_PROJ)/src/networklayer/contract/IPv6Address.h \
 	$(INET_PROJ)/src/networklayer/contract/IPAddress.h \
+	$(INET_PROJ)/src/networklayer/ipv4/ICMPMessage_m.h \
 	$(INET_PROJ)/src/networklayer/contract/IPProtocolId_m.h \
 	applications/ponder/MechanismExporter.h \
 	applications/ponder/EventPublisher.h
-$O/applications/ids/IDS_message_m.o: applications/ids/IDS_message_m.cc \
-	$(INET_PROJ)/src/base/INETDefs.h \
-	applications/ids/IDS_message_m.h \
-	applications/ids/IDSModule.h \
-	$(INET_PROJ)/src/networklayer/contract/IPAddress.h
+$O/applications/ids/IPBlock_m.o: applications/ids/IPBlock_m.cc \
+	applications/ids/IPBlock_m.h
 $O/applications/limiter/RateLimiter.o: applications/limiter/RateLimiter.cc \
 	$(INET_PROJ)/src/transport/contract/UDPControlInfo_m.h \
 	$(INET_PROJ)/src/networklayer/ipv4/IPDatagram_m.h \
+	applications/ids/IPBlock_m.h \
 	$(INET_PROJ)/src/base/INETDefs.h \
 	applications/classifier/Classifier.h \
 	applications/flow/flow_message_m.h \
@@ -629,6 +631,7 @@ $O/applications/worm/UDPWormVictim.o: applications/worm/UDPWormVictim.cc \
 	applications/worm/UDPWormQueryMessage_m.h \
 	applications/worm/UDPWormVictim.h \
 	$(INET_PROJ)/src/transport/contract/UDPControlInfo_m.h \
+	applications/worm/WormStatisticCollector.h \
 	$(INET_PROJ)/src/base/INETDefs.h \
 	$(INET_PROJ)/src/networklayer/contract/IPv6ControlInfo.h \
 	$(INET_PROJ)/src/networklayer/contract/IPControlInfo.h \
@@ -644,6 +647,8 @@ $O/applications/worm/UDPWormVictim.o: applications/worm/UDPWormVictim.cc \
 	$(INET_PROJ)/src/networklayer/contract/IPv6Address.h \
 	$(INET_PROJ)/src/networklayer/contract/IPAddress.h \
 	$(INET_PROJ)/src/networklayer/contract/IPProtocolId_m.h
+$O/applications/worm/WormStatisticCollector.o: applications/worm/WormStatisticCollector.cc \
+	applications/worm/WormStatisticCollector.h
 $O/applications/worm/UDPWormQueryMessage_m.o: applications/worm/UDPWormQueryMessage_m.cc \
 	applications/worm/UDPWormQueryMessage_m.h \
 	base/ReaSEDefs.h

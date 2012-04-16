@@ -402,6 +402,12 @@ void IP::reassembleAndDeliver(IPDatagram *datagram)
     else
     {
         int gateindex = mapping.getOutputGateForProtocol(protocol);
+		if (! gate("transportOut", gateindex)->getNextGate()->isConnected()) {
+			IPControlInfo *controlInfo = check_and_cast<IPControlInfo*>(packet->removeControlInfo());
+			EV << "transport layer for received packet does not exist, sending ICMP_DESTINATION_UNREACHABLE\n";
+			icmpAccess.get()->sendErrorMessage(packet, controlInfo, ICMP_DESTINATION_UNREACHABLE, ICMP_DU_PROTOCOL_UNREACHABLE);
+			return;
+		}
         send(packet, "transportOut", gateindex);
     }
 }

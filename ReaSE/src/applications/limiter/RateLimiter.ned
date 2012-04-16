@@ -7,4 +7,6 @@ simple RateLimiter
       output ifOut_ppp[];
       input ifIn_network[];
       output ifOut_network[];
+      
+      input fromIDS;
 }

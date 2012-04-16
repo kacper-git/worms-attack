@@ -14,6 +14,7 @@ const int UDP_HEADER_BYTES = 8;
 
 Define_Module( UDPWormVictim);
 
+
 UDPWormVictim::UDPWormVictim()
 {
 }
@@ -39,6 +40,11 @@ void UDPWormVictim::initialize(int stages)
 	if (stages != 3)
 		return;
 
+
+	//const char *wormStatisticPath = par();
+	cModule *statsModule = simulation.getModuleByPath("wormstatistic");
+	wormStatisticCollector = check_and_cast<WormStatisticCollector *>(statsModule);
+	wormStatisticCollector->addVictim();
 	probingDelay = par("timeBetweenProbingPackets");
 	maxProbingPackets = par("maxProbingPackets");
 	sourcePort = par("sourcePort");
@@ -64,7 +70,12 @@ void UDPWormVictim::initialize(int stages)
 	else
 		isActive = false;
 
+	if(isActive){
+		wormStatisticCollector->addStartVictim();
+		wormStatisticCollector->addInfectedHost();
+	}
 	probingTimer = new cMessage("timeoutForProbingPacket");
+	std::cout << "Starting at " << simTime() + startTime + startTimeDiff << " Yes or no:"<< isActive << endl;
 	if (isActive)
 		scheduleAt(simTime() + startTime + startTimeDiff, probingTimer);
 }
@@ -84,15 +95,19 @@ void UDPWormVictim::handleMessage(cMessage *msg)
 		// time to send the probing packet
 		if (maxProbingPackets != 0)
 		{
+			//std::cout << "Sending Probing packet" << endl;
 			if (maxProbingPackets > 0)
 				maxProbingPackets--;
 
 			scheduleAt(simTime() + probingDelay, msg);
 			sendProbingPacket();
+
 		}
 	}
 	else if (dynamic_cast<UDPPacket*> (msg))
+
 	{
+		std::cout << "UDPWormVictim: got message" << msg->getName() << " active:" << isActive << endl;
 		cPacket *packet = (UDPPacket*) msg;
 		if (isActive)
 		{
@@ -102,6 +117,7 @@ void UDPWormVictim::handleMessage(cMessage *msg)
 		if (dynamic_cast<UDPWormQueryMessage *> (packet->getEncapsulatedMsg()))
 		{
 			isActive = true;
+			wormStatisticCollector->addInfectedHost();
 
 			// now i'm an active worm and start probing
 			cout << "Worm at " << getFullPath() << " now active" << endl;
@@ -121,11 +137,14 @@ void UDPWormVictim::handleMessage(cMessage *msg)
  */
 void UDPWormVictim::sendProbingPacket()
 {
+
+
 	IPvXAddress targetAddr;
 	UDPWormQueryMessage *probing = new UDPWormQueryMessage("probing");
 
 	probing->setByteLength(packetLength);
 	targetAddr.set(intuniform(addrStart.get4().getInt(), addrEnd.get4().getInt(), 4));
+	//std::cout << "Prepare probing packet for " << targetAddr.get4() << endl;
 	probing->setKind(UDP_I_DATA);
 
 	UDPPacket *udpPacket = new UDPPacket("worm_udp");
